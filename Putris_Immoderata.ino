@@ -5,12 +5,11 @@
 
 #define LED_COUNT 30
 #define LED_PIN 6
+#define SW1 = 8  // 'Key Inserted' Button
+#define SW2 = 9  // Key Switch One
+#define SW3 = 10 // Key Switch Two
 
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_RGB + NEO_KHZ800);
-
-const int  sw1 = 8;  // 'Key Inserted' Button
-const int  sw2 = 9;  // Key Switch One
-const int  sw3 = 10; // Key Switch Two
 
 int sw1State      = HIGH; // current state of sw1
 int sw1lastState  = HIGH; // previous state of sw1
@@ -19,7 +18,6 @@ int sw2lastState  = HIGH; // previous state of sw2
 int sw3State      = HIGH; // current state of sw3
 int sw3lastState  = HIGH; // previous state of sw3
 
-//unsigned long currentMillis;
 unsigned long tmrCheck = 0;
 const unsigned long CHECK_INTERVAL = 10;
 
@@ -36,9 +34,9 @@ void setup() {
   ws2812fx.setMode(53);
   ws2812fx.start();
   
-  pinMode(sw1, INPUT_PULLUP);
-  pinMode(sw2, INPUT_PULLUP);
-  pinMode(sw3, INPUT_PULLUP);
+  pinMode(SW1, INPUT_PULLUP);
+  pinMode(SW2, INPUT_PULLUP);
+  pinMode(SW3, INPUT_PULLUP);
 }
 
 void loop() {
@@ -49,9 +47,9 @@ void loop() {
 void process_switches() {
   unsigned long currentMillis = millis();
   if(currentMillis - tmrCheck >= CHECK_INTERVAL) {
-    sw1State = digitalRead(sw1);
-    sw2State = digitalRead(sw2);
-    sw3State = digitalRead(sw3);
+    sw1State = digitalRead(SW1);
+    sw2State = digitalRead(SW2);
+    sw3State = digitalRead(SW3);
   
     // compare the switch State to its previous state
     if(sw1State != sw1lastState) {
