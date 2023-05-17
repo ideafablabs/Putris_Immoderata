@@ -1,6 +1,7 @@
 /*  Putris Immoderata - Dual Key Switch 
  *  Idea Fab Labs - Chico
  */
+
 #include <WS2812FX.h>
 
 #define LED_COUNT 30
