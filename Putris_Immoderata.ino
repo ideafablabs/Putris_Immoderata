@@ -1,14 +1,14 @@
 /*  Putris Immoderata - Dual Key Switch 
  *  Idea Fab Labs - Chico
  */
-
+ 
 #include <WS2812FX.h>
 
-#define LED_COUNT 30
+#define LED_COUNT 15
 #define LED_PIN 6
-#define SW1 = 8  // 'Key Inserted' Button
-#define SW2 = 9  // Key Switch One
-#define SW3 = 10 // Key Switch Two
+#define SW1_PIN 8  // 'Key Inserted' Button
+#define SW2_PIN 9  // Key Switch One
+#define SW3_PIN 10 // Key Switch Two
 
 WS2812FX ws2812fx = WS2812FX(LED_COUNT, LED_PIN, NEO_RGB + NEO_KHZ800);
 
@@ -19,8 +19,12 @@ int sw2lastState  = HIGH; // previous state of sw2
 int sw3State      = HIGH; // current state of sw3
 int sw3lastState  = HIGH; // previous state of sw3
 
-unsigned long tmrCheck = 0;
-const unsigned long CHECK_INTERVAL = 10;
+unsigned long tmrBounce = 0;
+const unsigned long BOUNCE_INTERVAL = 10;
+
+bool Running = false;
+unsigned long tmrTimeout = 0;
+const unsigned long TIMEOUT_INTERVAL = 7500;
 
 void setup() {
   Serial.begin(115200);
@@ -35,9 +39,9 @@ void setup() {
   ws2812fx.setMode(53);
   ws2812fx.start();
   
-  pinMode(SW1, INPUT_PULLUP);
-  pinMode(SW2, INPUT_PULLUP);
-  pinMode(SW3, INPUT_PULLUP);
+  pinMode(SW1_PIN, INPUT_PULLUP);
+  pinMode(SW2_PIN, INPUT_PULLUP);
+  pinMode(SW3_PIN, INPUT_PULLUP);
 }
 
 void loop() {
@@ -47,10 +51,11 @@ void loop() {
 
 void process_switches() {
   unsigned long currentMillis = millis();
-  if(currentMillis - tmrCheck >= CHECK_INTERVAL) {
-    sw1State = digitalRead(SW1);
-    sw2State = digitalRead(SW2);
-    sw3State = digitalRead(SW3);
+  
+  if(currentMillis - tmrBounce >= BOUNCE_INTERVAL) {
+    sw1State = digitalRead(SW1_PIN);
+    sw2State = digitalRead(SW2_PIN);
+    sw3State = digitalRead(SW3_PIN);
   
     // compare the switch State to its previous state
     if(sw1State != sw1lastState) {
@@ -61,14 +66,12 @@ void process_switches() {
         ws2812fx.setSpeed(3000);
         ws2812fx.setColor(0xFF0000);
         ws2812fx.setMode(15);
-
+        Running = false;
       } else {
         // if the current state is HIGH then the button went from on to off:
         Serial.println("sw1 off");
-        ws2812fx.setBrightness(50);
-        ws2812fx.setSpeed(3000);
-        ws2812fx.setColor(0xFF2222);
-        ws2812fx.setMode(53);
+        tmrTimeout = currentMillis;
+        Running = true;
       }
       // save the current state as the last state, for next time through the loop
       sw1lastState = sw1State;    
@@ -76,14 +79,14 @@ void process_switches() {
 
     if(sw2State != sw2lastState) {
       if(sw2State == LOW) {
-        // if the current state is LOW then the button went from off to on:
+        // if the current state is LOW then the switch went from off to on:
         Serial.println("sw2 on");
         ws2812fx.setBrightness(100);
         ws2812fx.setSpeed(3000);
         ws2812fx.setColor(0xFF2222);
         ws2812fx.setMode(51);        
       } else {
-        // if the current state is HIGH then the button went from on to off:
+        // if the current state is HIGH then the switch went from on to off:
         Serial.println("sw2 off");
       }
 
@@ -93,19 +96,28 @@ void process_switches() {
 
     if(sw3State != sw3lastState) {
       if(sw3State == LOW) {
-        // if the current state is LOW then the button went from off to on:
+        // if the current state is LOW then the switch went from off to on:
         Serial.println("sw3 on");
         ws2812fx.setBrightness(100);
         ws2812fx.setSpeed(3000);
         ws2812fx.setColor(0xFF2222);
         ws2812fx.setMode(11);
       } else {
-        // if the current state is HIGH then the button went from on to off:
+        // if the current state is HIGH then the switch went from on to off:
         Serial.println("sw3 off");
       }
       // save the current state as the last state, for next time through the loop
       sw3lastState = sw3State;    
     }
-    tmrCheck = currentMillis;
+    tmrBounce = currentMillis;
   }
-}
+  if(Running) {
+    if(currentMillis - tmrTimeout >= TIMEOUT_INTERVAL) {
+      ws2812fx.setBrightness(50);
+      ws2812fx.setSpeed(3000);
+      ws2812fx.setColor(0xFF2222);
+      ws2812fx.setMode(53);
+      Running = false;
+    }
+  }
+}                                                            
