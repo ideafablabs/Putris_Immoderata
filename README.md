@@ -6,4 +6,4 @@ a seperate registration that correlates two one of the two switches in the key b
 
 <img height="200" src="https://github.com/ideafablabs/Putris_Immoderata/blob/main/Putris-Immoderata.png">
 
-The 3D Files are generated using TinkerCAD ... The files can be found here: https://www.tinkercad.com/dashboard?type=tinkercad&collection=projects&id=1v5FQ9SIcFK
+The 3D Files are generated using TinkerCAD ... The files can be found here: https://www.tinkercad.com/users/9Wbn1uShxa2-scotty-franzyshen
