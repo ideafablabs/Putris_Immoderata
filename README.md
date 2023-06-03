@@ -1,5 +1,5 @@
 # Putris_Immoderata
-### Dual Key Switch Led Controler
+### Dual Key Switch Led Controller
 This is a LED controller that is triggered by one of two switches mounted inside a key lock block.
 There is also a push button triggered when a key is in the lock block.There are two keys each with
 a seperate registration that correlates to one of the two switches (mounted in the key block) triggering the
